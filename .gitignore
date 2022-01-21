@@ -3,6 +3,12 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+### macOS ###
+# General
+.DS_Store
+.AppleDouble
+.LSOverride
+
 # C extensions
 *.so
 
@@ -127,3 +133,4 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+.DS_Store
