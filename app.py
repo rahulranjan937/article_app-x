@@ -52,8 +52,8 @@ def articles():
         doc_2 = mycursor.fetchall()
 
         if doc_2:
-            # return render_template('articles.html', articles=doc_2)
-            return jsonify(data=doc_2)
+            return render_template('articles.html', articles=doc_2)
+            # return jsonify(data=doc_2)
 
         else:
             msg = 'No Articles Found'
