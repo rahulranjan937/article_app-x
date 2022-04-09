@@ -8,16 +8,17 @@ from wtforms import Form, StringField, TextAreaField, PasswordField, validators
 # from passlib.hash import sha256_crypt
 import mysql.connector
 from hashlib import sha256
+from config import dbHost,dbpasswd,dbport,dbuser,db
 
 app = Flask(__name__)
 
 # Config MySQL
 mydb = mysql.connector.connect(
-    host="20.228.144.187",
-    user="root",
-    password="Passwd@123r",
-    port=3306,
-    database="myflaskapp"
+    host=dbHost,
+    user=dbuser,
+    password=dbpasswd,
+    port=dbport,
+    database=db
 )
 
 print(mydb)
@@ -27,20 +28,17 @@ mycursor = mydb.cursor()
 
 # Home
 
-
 @app.route('/')
 def index():
     return render_template('home.html')
 
 # about
 
-
 @app.route('/about')
 def about():
     return render_template('about.html')
 
 # Articles
-
 
 @app.route('/articles', methods=['GET'])
 def articles():
@@ -64,7 +62,6 @@ def articles():
 
 # View Article
 
-
 @app.route('/article/<id>/', methods=['GET'])
 def articled(id):
     sql = "SELECT * FROM articles WHERE id = %s"
@@ -80,8 +77,8 @@ def articled(id):
     except Exception as e:
         print("error", e)
 
-
 # Register Form
+
 class RegisterFrom(Form):
     pass
     name = StringField('Name', [validators.Length(min=1, max=50)])
@@ -94,7 +91,6 @@ class RegisterFrom(Form):
     confirm = PasswordField('Confirm Password')
 
 # Register
-
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -148,7 +144,6 @@ def register():
 
 # Login
 
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -196,7 +191,6 @@ def login():
 
 # Check Session
 
-
 def is_logged_in(f):
     @wraps(f)
     def wrap(*args, **kwargs):
@@ -209,7 +203,6 @@ def is_logged_in(f):
 
 # Logout
 
-
 @app.route('/logout')
 def logout():
     session.clear()
@@ -219,7 +212,6 @@ def logout():
 # Change Password
 
 # Dashboard
-
 
 @app.route('/dashboard', methods=['GET', 'POST'])
 @is_logged_in
@@ -249,7 +241,6 @@ class ArticleForm(Form):
     body = TextAreaField('Body', [validators.Length(min=30)])
 
 # Add Article
-
 
 @app.route('/add_article', methods=['GET', 'POST'])
 @is_logged_in
@@ -282,7 +273,6 @@ def add_article():
     return render_template('add_article.html', form=form)
 
 # Edit Article
-
 
 @app.route("/edit_article/<id>/", methods=['GET', 'POST'])
 @is_logged_in
@@ -323,6 +313,7 @@ def edit_article(id):
 
     return render_template('edit_article.html', form=form)
 
+#Delete Article
 
 @app.route('/delete_article/<id>', methods=['GET', 'POST'])
 def delete_article(id):
