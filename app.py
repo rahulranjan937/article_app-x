@@ -12,8 +12,6 @@ from flask import (
     jsonify,
 )
 from functools import wraps
-from mysql.connector.cursor import CursorBase, MySQLCursor
-from mysql.connector.errors import Error
 
 # from data import Articles
 from wtforms import Form, StringField, TextAreaField, PasswordField, validators
@@ -26,9 +24,13 @@ from config import dbHost, dbpasswd, dbport, dbuser, db
 app = Flask(__name__)
 
 # Config MySQL
-mydb = mysql.connector.connect(
-    host=dbHost, user=dbuser, password=dbpasswd, port=dbport, database=db
-)
+
+dbHost = "bv2rebwf6zzsv341.cbetxkdyhwsb.us-east-1.rds.amazonaws.com"
+dbuser = "qq39ysw6ticedsg9"
+dbpasswd = "wv6ve6ntpzp2eta9"
+dbport = 3306
+db = "u7non66wzzet8ss7"
+mydb = mysql.connector.connect(host=dbHost, user=dbuser, password=dbpasswd, port=dbport, database=db)
 
 print(mydb)
 mycursor = mydb.cursor()

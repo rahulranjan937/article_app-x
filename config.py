@@ -8,4 +8,3 @@ dbuser = os.environ.get("user")
 dbpasswd = os.environ.get("password")
 dbport = os.environ.get("port")
 db = os.environ.get("database")
-
