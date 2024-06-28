@@ -25,14 +25,8 @@ app = Flask(__name__)
 
 # Config MySQL
 
-dbHost = "bv2rebwf6zzsv341.cbetxkdyhwsb.us-east-1.rds.amazonaws.com"
-dbuser = "qq39ysw6ticedsg9"
-dbpasswd = "wv6ve6ntpzp2eta9"
-dbport = 3306
-db = "u7non66wzzet8ss7"
 mydb = mysql.connector.connect(host=dbHost, user=dbuser, password=dbpasswd, port=dbport, database=db)
 
-print(mydb)
 mycursor = mydb.cursor()
 
 # article = Articles()

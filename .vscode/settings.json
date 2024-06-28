@@ -1,9 +1,7 @@
 {
   "python.analysis.typeCheckingMode": "off",
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
   "[python]": {
-    "editor.defaultFormatter": "ms-python.black-formatter"
-  },
-  "python.formatting.blackArgs": ["--line-length", "120"],
-  "python.formatting.provider": "black"
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.formatOnSave": true
+  }
 }
