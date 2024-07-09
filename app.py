@@ -111,7 +111,7 @@ def register():
         password = sha256(password).hexdigest()
 
         # Execute query
-        sql = "INSERT INTO user(name, email, username, password) VALUES(%s, %s, %s, %s)"
+        sql = "INSERT INTO users(name, email, username, password) VALUES(%s, %s, %s, %s)"
         val = (name, email, username, password)
 
         try:
@@ -154,7 +154,7 @@ def login():
         print(username)
         print(password_candidate)
 
-        sql = "SELECT * FROM user WHERE username = %s"
+        sql = "SELECT * FROM users WHERE username = %s"
         val = (username,)
 
         try:
@@ -216,12 +216,15 @@ def logout():
 @app.route("/dashboard", methods=["GET", "POST"])
 @is_logged_in
 def dashboard():
-    sql = "SELECT * FROM articles"
+    sql = "SELECT * FROM articles WHERE author = %s"
+    val = (session["username"],)
 
     try:
-        mycursor.execute(sql)
+        mycursor.execute(sql, val)
 
         doc_2 = mycursor.fetchall()
+
+        print(doc_2)
 
         if doc_2:
             return render_template("dashboard.html", articles=doc_2)
