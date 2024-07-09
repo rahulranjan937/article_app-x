@@ -1,22 +1,15 @@
-from logging import error
+# from data import Articles
 from flask import (
     Flask,
     render_template,
     flash,
     redirect,
-    url_for,
-    session,
-    logging,
     request,
-    wrappers,
-    jsonify,
+    session,
+    url_for,
 )
 from functools import wraps
-
-# from data import Articles
 from wtforms import Form, StringField, TextAreaField, PasswordField, validators
-
-# from passlib.hash import sha256_crypt
 import mysql.connector
 from hashlib import sha256
 from config import dbHost, dbpasswd, dbport, dbuser, db
@@ -24,32 +17,32 @@ from config import dbHost, dbpasswd, dbport, dbuser, db
 app = Flask(__name__)
 
 # Config MySQL
-
 mydb = mysql.connector.connect(host=dbHost, user=dbuser, password=dbpasswd, port=dbport, database=db)
 
 mycursor = mydb.cursor()
 
 # article = Articles()
 
+
 # Home
-
-
 @app.route("/")
 def index():
     return render_template("home.html")
 
 
+# Favicon Icon
+@app.route("/favicon.ico")
+def favicon():
+    return redirect(url_for("static", filename="favicon.ico"))
+
+
 # about
-
-
 @app.route("/about")
 def about():
     return render_template("about.html")
 
 
 # Articles
-
-
 @app.route("/articles", methods=["GET"])
 def articles():
     sql = "SELECT * FROM articles"
@@ -72,8 +65,6 @@ def articles():
 
 
 # View Article
-
-
 @app.route("/article/<id>/", methods=["GET"])
 def articled(id):
     sql = "SELECT * FROM articles WHERE id = %s"
@@ -91,8 +82,6 @@ def articled(id):
 
 
 # Register Form
-
-
 class RegisterFrom(Form):
     pass
     name = StringField("Name", [validators.Length(min=1, max=50)])
@@ -109,13 +98,10 @@ class RegisterFrom(Form):
 
 
 # Register
-
-
 @app.route("/register", methods=["GET", "POST"])
 def register():
     form = RegisterFrom(request.form)
     if request.method == "POST" and form.validate():
-        print("will create the user")
         name = form.name.data
         email = form.email.data
         username = form.username.data
@@ -124,8 +110,6 @@ def register():
         password = password.encode("utf-8")
         password = sha256(password).hexdigest()
 
-        print(password)
-
         # Execute query
         sql = "INSERT INTO user(name, email, username, password) VALUES(%s, %s, %s, %s)"
         val = (name, email, username, password)
@@ -133,8 +117,6 @@ def register():
         try:
             mycursor.execute(sql, val)
             checkData = mycursor.fetchone()
-
-            print(checkData)
 
             if checkData:
                 flash("username or email already exist", "danger")
@@ -163,8 +145,6 @@ def register():
 
 
 # Login
-
-
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -187,12 +167,12 @@ def login():
                 hash_pass = doc[4]
                 password = password_candidate.encode("utf-8")
                 password = sha256(password).hexdigest()
-                print(hash_pass)
-                print(password)
+
                 if password == hash_pass:
                     session["logged_in"] = True
                     session["username"] = username
                     app.logger.info("PASSWORD MATCHED")
+
                     flash("You are now logged in", "success")
                     return redirect(url_for("dashboard"))
                 else:
@@ -212,8 +192,6 @@ def login():
 
 
 # Check Session
-
-
 def is_logged_in(f):
     @wraps(f)
     def wrap(*args, **kwargs):
@@ -227,8 +205,6 @@ def is_logged_in(f):
 
 
 # Logout
-
-
 @app.route("/logout")
 def logout():
     session.clear()
@@ -236,11 +212,7 @@ def logout():
     return redirect(url_for("login"))
 
 
-# Change Password
-
 # Dashboard
-
-
 @app.route("/dashboard", methods=["GET", "POST"])
 @is_logged_in
 def dashboard():
@@ -263,16 +235,12 @@ def dashboard():
 
 
 # Article Form
-
-
 class ArticleForm(Form):
     title = StringField("Title", [validators.Length(min=1, max=200)])
     body = TextAreaField("Body", [validators.Length(min=30)])
 
 
 # Add Article
-
-
 @app.route("/add_article", methods=["GET", "POST"])
 @is_logged_in
 def add_article():
@@ -280,9 +248,6 @@ def add_article():
     if request.method == "POST" and form.validate():
         title = form.title.data
         body = form.body.data
-
-        print(title)
-        print(body)
 
         sql = "INSERT INTO articles(title, body, author) VALUES(%s, %s, %s)"
         val = (
@@ -309,8 +274,6 @@ def add_article():
 
 
 # Edit Article
-
-
 @app.route("/edit_article/<id>/", methods=["GET", "POST"])
 @is_logged_in
 def edit_article(id):
@@ -327,9 +290,6 @@ def edit_article(id):
         title = request.form.get("title")
         body = request.form.get("body")
 
-        print(title)
-        print(body)
-
         app.logger.info(title)
 
         sql = "UPDATE articles SET title=%s, body=%s WHERE id=%s"
@@ -338,8 +298,8 @@ def edit_article(id):
             body,
             id,
         )
-        try:
 
+        try:
             mycursor.execute(sql, val)
         except Exception as e:
             print("error", e)
@@ -356,12 +316,11 @@ def edit_article(id):
 
 
 # Delete Article
-
-
 @app.route("/delete_article/<id>", methods=["GET", "POST"])
 def delete_article(id):
     sql = "DELETE FROM articles WHERE id = %s"
     val = (id,)
+
     try:
         mycursor.execute(sql, val)
     except Exception as e:
